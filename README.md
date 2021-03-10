@@ -1,1 +1,1 @@
-this repository iis for leetcode.
+This repository is for leetcode.
