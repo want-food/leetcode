@@ -1,13 +1,14 @@
 /*************************************************************************
-	> File Name: 199.cpp
+	> File Name: 94.cpp
 	> Author: dingchen
 	> Mail: dingchen@163.com 
-	> Created Time: Mon Jul  5 22:54:56 2021
+	> Created Time: Mon Jul  5 08:35:30 2021
  ************************************************************************/
 
-#include<iostream>
+#include <iostream>
 #include <vector>
 #include <queue>
+#include <stack>
 
 using namespace std;
 
@@ -22,23 +23,41 @@ struct TreeNode {
 
 class Solution {
 public:
-	vector<int> ans;
-    vector<int> rightSideView(TreeNode* root) {
-		dfs(root, 0);
-		return ans;
+    vector<int> inorderTraversal(TreeNode* root) {
+		// // 1. 递归
+		// vector<int> res;
+		// inorder(root, res);
+		// return res;
+
+		// 2. 迭代
+		vector<int> res;
+		stack<TreeNode*> stk;
+		while(root != nullptr || !stk.empty()) {
+			while(root != nullptr) {
+				stk.push(root);
+				root = root->left;
+			}
+			root = stk.top();
+			stk.pop();
+			res.push_back(root->val);
+			root = root->right;
+		}
+		return res;
     }
-	void dfs(TreeNode *root, int depth) {
-		if(root->left == nullptr || root->right == nullptr) {
-			
+	void inorder(TreeNode *root, vector<int>& res) {
+		if(root) {
+			inorder(root->left, res);
+			res.push_back(root->val);
+			inorder(root->right, res);
 		}
 	}
-	TreeNode *buildTree(vector<int>& nums) {
-		if(nums.size() == 0) return nullptr; 
+	TreeNode* buildTree(vector<int>& nums) {
+		if(nums.size() == 0) return nullptr;
 
 		TreeNode *root = new TreeNode(nums[0]);
 		queue<TreeNode*> que;
 		que.push(root);
-		for (int i = 1; i < nums.size();  ) {
+		for (int i = 1; i < nums.size(); ) {
 			TreeNode *p = que.front();
 			que.pop();
 
@@ -56,12 +75,12 @@ public:
 };
 
 int main() {
-	vector<int> nums = {1,2,3,0,5,0,4};
+	vector<int> nums = {1,0,2,3};
 
 	Solution solution;
 	TreeNode *root = solution.buildTree(nums);
-	vector<int> res = solution.rightSideView(root);
-	cout << "res: " << endl;
+	vector<int> res = solution.inorderTraversal(root);
+	cout <<  "res: " << endl;
 	for (int i: res) {
 		cout << i << " ";
 	}

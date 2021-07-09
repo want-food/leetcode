@@ -1,8 +1,8 @@
 /*************************************************************************
-	> File Name: 199.cpp
+	> File Name: 113.cpp
 	> Author: dingchen
 	> Mail: dingchen@163.com 
-	> Created Time: Mon Jul  5 22:54:56 2021
+	> Created Time: Wed Jul  7 09:03:55 2021
  ************************************************************************/
 
 #include<iostream>
@@ -22,31 +22,41 @@ struct TreeNode {
 
 class Solution {
 public:
-	vector<int> ans;
-    vector<int> rightSideView(TreeNode* root) {
-		dfs(root, 0);
+    vector<vector<int>> pathSum(TreeNode* root, int targetSum) {
+		vector<vector<int>> ans;
+		vector<int> vec;
+		dfs(root, targetSum, 0, vec, ans);
 		return ans;
     }
-	void dfs(TreeNode *root, int depth) {
-		if(root->left == nullptr || root->right == nullptr) {
-			
+	void dfs(TreeNode *root, int targetSum, int sum, vector<int>& vec, vector<vector<int>>& ans) {
+		if(root == nullptr) return;
+		sum += root->val;
+		vec.push_back(root->val);
+		if(root->left == nullptr && root->right == nullptr) {
+			if(sum == targetSum) {
+				ans.push_back(vec);
+			}
+			vec.pop_back();
+			return;
 		}
+		dfs(root->left, targetSum, sum, vec, ans);
+		dfs(root->right, targetSum, sum, vec, ans);
+		vec.pop_back();
 	}
-	TreeNode *buildTree(vector<int>& nums) {
-		if(nums.size() == 0) return nullptr; 
+	TreeNode *buildTree(vector<int>& nums)  {
+		if(nums.size() == 0) return nullptr;
 
 		TreeNode *root = new TreeNode(nums[0]);
 		queue<TreeNode*> que;
 		que.push(root);
-		for (int i = 1; i < nums.size();  ) {
+		for (int i = 1; i < nums.size(); ) {
 			TreeNode *p = que.front();
 			que.pop();
-
 			if(nums[i++] != 0) {
 				p->left = new TreeNode(nums[i-1]);
 				que.push(p->left);
 			}
-			if(nums[i++] != 0) {
+			if(nums[i++] !=  0) {
 				p->right = new TreeNode(nums[i-1]);
 				que.push(p->right);
 			}
@@ -56,14 +66,19 @@ public:
 };
 
 int main() {
-	vector<int> nums = {1,2,3,0,5,0,4};
+	vector<int> nums = {5,4,8,11,0,13,4,7,2,0,0,5,1};
+	int targetSum = 22;
+	// nums = {1,2};targetSum = 0;
 
 	Solution solution;
 	TreeNode *root = solution.buildTree(nums);
-	vector<int> res = solution.rightSideView(root);
+	vector<vector<int>> res = solution.pathSum(root, targetSum);
 	cout << "res: " << endl;
-	for (int i: res) {
-		cout << i << " ";
+	for (vector<int>& vec: res) {
+		for (int i: vec) {
+			cout << i <<  " ";
+		}
+		cout << endl;
 	}
 	cout << endl;
 }

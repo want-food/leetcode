@@ -1,8 +1,8 @@
 /*************************************************************************
-	> File Name: 199.cpp
+	> File Name: 543.cpp
 	> Author: dingchen
 	> Mail: dingchen@163.com 
-	> Created Time: Mon Jul  5 22:54:56 2021
+	> Created Time: Wed Jul  7 09:43:04 2021
  ************************************************************************/
 
 #include<iostream>
@@ -22,31 +22,36 @@ struct TreeNode {
 
 class Solution {
 public:
-	vector<int> ans;
-    vector<int> rightSideView(TreeNode* root) {
-		dfs(root, 0);
-		return ans;
+    int diameterOfBinaryTree(TreeNode* root) {
+		if(root == nullptr) return 0;
+		int ans = 0;
+		diameterOfSingleTree(root, ans);
+		if(ans == 0) return 0;
+		return ans-1;
     }
-	void dfs(TreeNode *root, int depth) {
-		if(root->left == nullptr || root->right == nullptr) {
-			
-		}
+	int diameterOfSingleTree(TreeNode* root, int& ans) {
+		if(root == nullptr) return 0;
+		if(root->left == nullptr && root->right == nullptr) return 1;
+
+		int l = diameterOfSingleTree(root->left, ans);
+		int r = diameterOfSingleTree(root->right, ans);
+		if(ans < l+r+1) ans = l+r+1;
+		return 1 + max(l, r);
 	}
-	TreeNode *buildTree(vector<int>& nums) {
-		if(nums.size() == 0) return nullptr; 
+	TreeNode *buildTree(vector<int>& nums)  {
+		if(nums.size() == 0) return nullptr;
 
 		TreeNode *root = new TreeNode(nums[0]);
 		queue<TreeNode*> que;
 		que.push(root);
-		for (int i = 1; i < nums.size();  ) {
+		for (int i = 1; i < nums.size(); ) {
 			TreeNode *p = que.front();
 			que.pop();
-
 			if(nums[i++] != 0) {
 				p->left = new TreeNode(nums[i-1]);
 				que.push(p->left);
 			}
-			if(nums[i++] != 0) {
+			if(nums[i++] !=  0) {
 				p->right = new TreeNode(nums[i-1]);
 				que.push(p->right);
 			}
@@ -56,14 +61,10 @@ public:
 };
 
 int main() {
-	vector<int> nums = {1,2,3,0,5,0,4};
+	vector<int> nums = {1,2,3,4,5};
 
 	Solution solution;
 	TreeNode *root = solution.buildTree(nums);
-	vector<int> res = solution.rightSideView(root);
-	cout << "res: " << endl;
-	for (int i: res) {
-		cout << i << " ";
-	}
-	cout << endl;
+	int res = solution.diameterOfBinaryTree(root);
+	cout << "res: " << res << endl;
 }
